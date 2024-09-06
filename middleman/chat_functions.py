@@ -2,15 +2,27 @@ import logging
 from typing import Union
 
 from commonmark import commonmark
+
 # noinspection PyPackageRequirements
-from nio import SendRetryError, RoomSendResponse, RoomSendError, LocalProtocolError, AsyncClient
+from nio import (
+    SendRetryError,
+    RoomSendResponse,
+    RoomSendError,
+    LocalProtocolError,
+    AsyncClient,
+)
 
 logger = logging.getLogger(__name__)
 
 
 async def send_text_to_room(
-    client: AsyncClient, room: str, message: str, notice: bool = True, markdown_convert: bool = True,
-    reply_to_event_id: str = None, replaces_event_id: str = None,
+    client: AsyncClient,
+    room: str,
+    message: str,
+    notice: bool = True,
+    markdown_convert: bool = True,
+    reply_to_event_id: str = None,
+    replaces_event_id: str = None,
 ) -> Union[RoomSendResponse, RoomSendError, str]:
     """Send text to a matrix room
 
@@ -91,13 +103,10 @@ async def send_text_to_room(
         return f"Failed to send message: {ex}"
 
 
-async def get_dm(client: AsyncClient, user: str): 
+async def get_dm(client: AsyncClient, user: str):
     room_id = self.store.get_dm(user_id=user)
     if not room_id:
-        resp = await client.room_create(
-            is_direct=True,
-            invite=[user]
-        )
+        resp = await client.room_create(is_direct=True, invite=[user])
         room_id = resp.room_id
         self.store.store_dm(user_id=user, room_id=room_id)
     return room_id
